@@ -1,4 +1,4 @@
-# Simple Discord Bot
+# The Ruler of Server
 A Discord Bot written in Python that can play Music from `YouTube` and `YouTube Music` (with a little twist😉)!<br>
 It can also run custom services on Host Server through `System Contol` (A.K.A. `systemctl`)...
 <br><br>
@@ -147,7 +147,7 @@ You can freely edit the follwing variables in the `settings.json` and `resetSett
 - `BOT_TOKEN`: Remember the Token you took from the `Discord Developer Portal`? This is a great place to put it
 - `BOT_PREFIX`: Every message that start with what is inside here will invoke the Bot, so be careful... or not...
 - `BOT_AVATAR`: Remember the link of the photo you put on the Bot's profile? That's a really good place to put it
-- `BOT_ACCENT_COLOR`: The color that will be visualized the embeded messages (use hex notation without the #)
+- `BOT_ACCENT_COLOR`: The color that will be visualized the embeded messages (use hex notation and replace the `#` with `0x`)
 - `BOT_ADMIN_ROLE`: Here you will need to put the role that can use the `sudo` privileges (do not include @, only the name)
 - `GATCHA_MAX_PITY`: Feel free to raise or lower this number, the lower it is the more frequently you will not decide what song will be played...
 - `GATCHA_50_50_LOOSE`: Add or remove how many song you want, just the example included

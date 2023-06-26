@@ -1,0 +1,100 @@
+{
+    "BOT_NAME": "YourBotName",
+    "BOT_TOKEN": "YourToken",
+    "BOT_PREFIX": "-",
+    "BOT_AVATAR": "YourProfilePictureHere",
+    "BOT_ACCENT_COLOR": "0xffffff",
+    "BOT_EMBED_FOOTER": [
+        "Remeber not to feed Greemlins after midnight!",
+        "I don't like sand. It's coarse, and rough, and irritating, and it gets everywhere.",
+        "I'm something of a Programmer myself",
+        "I am your past, the everlasting law, the guardian of eternity",
+        "🎶I have your IP, your home address too, your government files says a lot about you...🎶"
+    ],
+    "BOT_GAME_PRESENCE": [
+        "It's SHOWTIME!!!",
+        "Come on, we can do it!",
+        "La la-la-la-la-",
+        "Eyes on me!",
+        "Everybody stand back!",
+        "Teamwork is dreamwork!",
+        "We shall prevail!",
+        "Cullein-Anbar, help!",
+        "Through me, justice is serverd!",
+        "Judgment is upon you.",
+        "Your sins weigh upon your soul.",
+        "Time for - Retribution!",
+        "For Rex Lapis!",
+        "This is long overdue.",
+        "Everyone on me!",
+        "Time to go!",
+        "Pyre, pyre, pants of fire!",
+        "Barbatos, guide us!",
+        "Fallen leaves... adorn my knight!",
+        "Kamisato Art: Soumetsu!",
+        "Kamisato Art: Suyuu!",
+        "Unsightly insects!",
+        "Wretched, vermin!",
+        "Cry louder!",
+        "Bow your head!",
+        "Know your place!",
+        "You dare to gaze upon me ?!",
+        "Nowhere to hide!",
+        "With sword come shadow!",
+        "Cut to the chase!",
+        "Glory to the Shogun!",
+        "Time to clean up",
+        "Torn to Oblivion",
+        "Orders given. Orders received.",
+        "Now, you shall perish!",
+        "Inazuma shines Eternal!",
+        "Confess!"
+    ],
+    "BOT_ADMIN_ROLE": "YouRole",
+    "BOT_SERVICES_ALLOWED": [],
+    "BOT_SERVICES_MAINTEINANCE": [],
+    "BOT_FEATURES_ENABLED": [],
+    "BOT_FEATURES_DISABLED": [
+        "logger",
+        "systemctl",
+        "pity",
+        "music_player",
+        "minimal_mode",
+        "caching"
+    ],
+    "BOT_GATCHA": {
+        "GATCHA_CURRENT_PITY": 0,
+        "GATCHA_MAX_PITY": 90,
+        "GATCHA_50_50_LOOSE": [
+            [
+                "Boom Boom Boom Boom!!!",
+                "https://www.youtube.com/watch?v=llyiQ4I-mcQ"
+            ],
+            [
+                "Never Gonna Give You Up",
+                "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            ],
+            [
+                "My Honest Reaction",
+                "https://www.youtube.com/watch?v=ewImr3hvl4k"
+            ],
+            [
+                "Gas Gas Gas",
+                "https://www.youtube.com/watch?v=atuFSv2bLa8"
+            ],
+            [
+                "I Am The Storm That Is Approaching",
+                "https://www.youtube.com/watch?v=d-ggzGbsEWE"
+            ],
+            [
+                "Maxwell The Cat (Techno Flip)",
+                "https://www.youtube.com/watch?v=M2Ha6y8JUI8"
+            ],
+            [
+                "Polumnia Omnia - Live",
+                "https://www.youtube.com/watch?v=CyrsVvea0TM"
+            ]
+        ]
+    },
+    "BOT_VERSION": "1.0.0"
+}

@@ -76,7 +76,7 @@ Navigate to the installation folder (make sure it's empty) and write it down the
 ### Step 2
 Download the leatest release and extract it with:
 ```bash
-wget "https://github.com/Markus2003/simpleDiscordBot/releases/latest/Bot Deployer.zip" -O "Bot Deployer.zip" && unzip "Bot Deployer.zip" && rm "Bot Deployer.zip"
+wget "https://github.com/Markus2003/simple-discord-bot/releases/download/v1.0.0/Bot.Deployer.zip" -O "Bot Deployer.zip" && unzip "Bot Deployer.zip" && rm "Bot Deployer.zip"
 ```
 
 ### Step 3
@@ -196,7 +196,7 @@ I am **NOT** responsible for any damage or data steal caused to your machine by 
 <br><br>
 
 # License
-Thi project use the [GNU GPLv3](https://github.com/Markus2003/simpleDiscordBot/blob/main/LICENSE) license.
+Thi project use the [GNU GPLv3](https://github.com/Markus2003/simple-discord-bot/blob/main/LICENSE) license.
 <br><br>
 
 # Credit

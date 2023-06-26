@@ -1,4 +1,4 @@
-# The Ruler of Server
+# Simple Discord Bot
 A Discord Bot written in Python that can play Music from `YouTube` and `YouTube Music` (with a little twist😉)!<br>
 It can also run custom services on Host Server through `System Contol` (A.K.A. `systemctl`)...
 <br><br>

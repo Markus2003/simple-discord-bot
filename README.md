@@ -77,7 +77,7 @@ Navigate to the installation folder (make sure it's empty) and write it down the
 ### Step 2
 Download the leatest release and extract it with:
 ```bash
-wget "https://github.com/Markus2003/simpleDiscordBot/releases/latest/Bot Deployer.zip" -O "Bot Deployer.zip" && unzip "Bot Deployer.zip" && rm "Bot Deployer.zip"
+wget "https://github.com/Markus2003/simple-discord-bot/releases/latest/download/Bot.Deployer.zip" -O "Bot Deployer.zip" && unzip "Bot Deployer.zip" && rm "Bot Deployer.zip"
 ```
 
 ### Step 3

@@ -81,12 +81,12 @@ wget "https://github.com/Markus2003/simpleDiscordBot/releases/latest/Bot Deploye
 ```
 
 ### Step 3
-Edit the `settings.json` and `resetSettings.json` by typing:
+Edit the `settings.json.new` and `resetSettings.json.new` by typing:
 ```bash
-nano src/configs/resetSettings.json
+nano src/configs/resetSettings.json.new
 ```
 ```bash
-nano src/configs/settings.json
+nano src/configs/settings.json.new
 ```
 If you are installing on Termux, you have finished the setup. Run `python3 main.py` to start the bot (see [Features](#features) for more goodies).<br>
 If you are installing on Linux continue down here.

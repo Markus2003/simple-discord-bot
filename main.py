@@ -8,7 +8,9 @@ import random
 import threading
 import time
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from os import rename, remove
+from os.path import exists as fileExists
 
 import discord
 from requests import get
@@ -17,6 +19,7 @@ from yt_dlp import YoutubeDL
 import src.res.discordEmoji as discordEmoji
 import src.res.discordLogger as discordLogger
 import src.res.printStatusToConsole as printStatus
+
 ##############################################
 #                                            #
 ##############################################
@@ -122,7 +125,7 @@ def id_from_url ( song_link ):
 
 # DatabaseQuery-like to search an element (song) in 'buffer.json'
 def SELECT ( buffer, index_title, term, return_type ):
-    if index_title != "webpage_id" and index_title != "title" and index_title != "uuid":
+    if index_title not in [ "webpage_id", "uuid" ]:
         return None
 
     internal_DB = []
@@ -148,11 +151,12 @@ def INSERT ( buffer, args ):
         internal_DB = json.load( external_DB )
         external_DB.close()
 
-    if SELECT( BUFFER_JSON, "webpage_id", args[0], 0 ) == None :
+    if SELECT( buffer, "webpage_id", args[0], 0 ) == None :
         temp = {
             "webpage_id": args[0],
             "title": args[1],
-            "uuid": args[2]
+            "uuid": args[2],
+            "available": args[3]
         }
         internal_DB.append( temp )
         with open( buffer, "w" ) as external_DB:
@@ -173,7 +177,7 @@ def DELETE ( buffer, webpage_id ):
             internal_DB = json.load( external_DB )
             external_DB.close()
 
-        internal_DB.pop( SELECT( buffer, "webpage_id", webpage_id, 1 ) )
+        internal_DB.pop( SELECT( buffer, "webpage_id", webpage_id, 0 ) )
         with open( buffer, "w" ) as external_DB:
             json.dump( internal_DB, external_DB, indent=4 )
             external_DB.close()
@@ -182,6 +186,29 @@ def DELETE ( buffer, webpage_id ):
 
     else:
         return False
+
+# DatabaseQuery-like to edit an element (song) in 'buffer.json'
+def UPDATE ( buffer, row_title_identifier, row_term_identifier, index_title, new_term ):
+    if row_title_identifier not in [ "webpage_id", "uuid" ] or index_title not in [ "webpage_id", "title", "uuid", "available" ]:
+        return None
+
+    if SELECT( buffer, row_title_identifier, row_term_identifier, 0 ) == None:
+        return False
+
+    else:
+        internal_DB = []
+        with open( buffer, "r" ) as external_DB:
+            internal_DB = json.load( external_DB )
+            external_DB.close()
+
+        internal_DB[ SELECT( buffer, row_title_identifier, row_term_identifier, 0 ) ][ index_title ] = new_term
+        with open( buffer, "w" ) as external_DB:
+            json.dump( internal_DB, external_DB, indent=4 )
+            external_DB.close()
+
+        return True
+
+    return None
 
 
 # Function to be exeuted as a thread to provide a background bufferring while streaming
@@ -198,6 +225,8 @@ def fastBuffer ( uuid, link ):
     }
     with YoutubeDL( buffer_opts ) as ydl:
         ydl.download([link])
+
+    UPDATE( BUFFER_JSON, "uuid", uuid, "available", True )
 
 
 # Preliminar Checks on Buffer Folder and 'buffer.json'
@@ -245,10 +274,21 @@ async def play_next_song ( message ):
     except:
         pass
 
+    if checkService('caching') == 1:
+        if current_song[3] != None:
+            if current_song[2] == False:
+                try:
+                    if SELECT( BUFFER_JSON, "uuid", current_song[3], 1 )['available'] == True:
+                        current_song[0] = discord.FFmpegPCMAudio( f"{BUFFER_DIR}{current_song[3]}.mp3" )
+
+                except Exception:
+                    print("Exception in queue handling")
+                    pass
+
     vc.play(current_song[0], after=lambda e: print('Player error: %s' % e) if e else None)
     await message.channel.send( f"Playing **{discordEmoji.MUSIC_NOTE} {current_song[1]} {discordEmoji.MUSIC_NOTE}**", reference=message )
     while vc.is_playing() or is_paused:
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.1)
 
     await vc.disconnect()
     is_playing = False
@@ -505,10 +545,8 @@ async def on_message( message ):
         # Ping Command
         elif message.content == f"{BOT_PREFIX}ping":
             printStatus.info( f"[{messageID}] Command acknowledge [{BOT_PREFIX}ping]", 2 )
-            #diff = datetime.now() - datetime.strptime(str( message.created_at ), "%Y-%m-%d %H:%M:%S.%f") - timedelta(hours=1)
-            #await message.channel.send( f"Pong! in `{diff} ms`", reference=message )
-            await message.channel.send( f"Yeah... Don't do it...", reference=message )
-            printStatus.fail( f"[{messageID}] Command not executed", 1 )
+            await message.channel.send( f"Pong! in `{ round( ( datetime.now( timezone.utc ) - datetime.fromisoformat( str( message.created_at )  ).replace( tzinfo=timezone.utc ) ).total_seconds() * 1000, 1 ) } ms`", reference=message )
+            printStatus.success_green( f"[{messageID}] Command executed", 1 )
 
         # Pong Command beacause why not
         elif message.content == f"{BOT_PREFIX}pong":
@@ -567,7 +605,7 @@ async def on_message( message ):
                     async with message.channel.typing():
                         url = search( message.content.split(' ')[1] )["webpage_url"]
                         url_info = ytdl.extract_info(url, download=False)
-                        await message.channel.send(f"Result for this query is:\n**Title**: `{url_info['title']}`\n**Duration**: `{url_info['duration']}`\n**Link**: {url}", reference=message)
+                        await message.channel.send(f"Result for this query is:\n**Title**: `{url_info['title']}`\n**Duration**: `{str(timedelta(seconds=url_info['duration']))}`\n**Link**: {url}", reference=message)
 
                 else:
                     await message.channel.send(f"Invalid query: `no link accepted`", reference=message)
@@ -614,32 +652,31 @@ async def on_message( message ):
 
                 audio_player = None
 
-                if checkService( 'caching' ) == 1:
+                if checkFeature( 'caching' ) == 1:
                     if url_info['duration'] <= 900:
                         if SELECT( BUFFER_JSON, "webpage_id", id_from_url( url ), 0 ) != None:
                             temp = SELECT( BUFFER_JSON, "webpage_id", id_from_url( url ), 1 )
                             audio_player = discord.FFmpegPCMAudio( f"{BUFFER_DIR}{temp['uuid']}.mp3" )
-                            music_queue.append( [ audio_player, url_info['title'] ] )
+                            music_queue.append( [ audio_player, url_info['title'], True, temp['uuid'] ] )
 
                         else:
                             loopBuffer = asyncio.new_event_loop()
                             tempUUID = uuid.uuid1()
                             await message.channel.send(f"{discordEmoji.WARNING} Song **{url_info['title']}** not in cache, fast buffering in background while streaming...", reference=message)
-                            #await fastBuffer( str( tempUUID ), url )
                             loopBuffer.run_in_executor( None, fastBuffer, str( tempUUID ), url )
-                            INSERT( BUFFER_JSON, [ id_from_url( url ), url_info['title'], str( tempUUID ) ] )
+                            INSERT( BUFFER_JSON, [ id_from_url( url ), url_info['title'], str( tempUUID ), False ] )
                             audio_player = discord.FFmpegPCMAudio( url_info['url'] )
-                            music_queue.append( [ audio_player, url_info['title'] ] )
+                            music_queue.append( [ audio_player, url_info['title'], False, str( tempUUID ) ] )
 
                     else:
                         await message.channel.send(f"{discordEmoji.WARNING} Song **{url_info['title']}** too long, only streaming allowed", reference=message)
                         audio_player = discord.FFmpegPCMAudio( url_info['url'] )
-                        music_queue.append( [ audio_player, url_info['title'] ] )
+                        music_queue.append( [ audio_player, url_info['title'], False, None ] )
                 
                 else:
                     url_info = ytdl.extract_info(url, download=False)
                     audio_player = discord.FFmpegPCMAudio( url_info['url'] )
-                    music_queue.append( [ audio_player, url_info['title'] ] )
+                    music_queue.append( [ audio_player, url_info['title'], False, None ] )
 
                 updateSettings()
 
@@ -1124,6 +1161,51 @@ async def on_message( message ):
 
 
 if __name__ == '__main__':
+    printStatus.work( "Checking if Settings need an update...", 0 )
+    for fileConf in [ 'src/configs/settings.json', 'src/configs/resetSettings.json' ]:
+        printStatus.work( f"Checking '{ fileConf }'...", 1 )
+        if fileExists( fileConf + ".new" ) and fileExists( fileConf ):
+            printStatus.info( f"Updating old '{ fileConf }'...", 2 )
+            oldConf = []
+            newConf = []
+            with open( fileConf, "r" ) as external_Conf:
+                oldConf = json.load( external_Conf )
+                external_Conf.close()
+
+            with open( fileConf + ".new", "r" ) as external_Conf:
+                newConf = json.load( external_Conf )
+                external_Conf.close()
+
+            for service in newConf["BOT_FEATURES_DISABLED"]:
+                try:
+                    if service not in oldConf["BOT_FEATURES_ENABLED"] and service not in oldConf["BOT_FEATURES_DISABLED"]:
+                        oldConf["BOT_FEATURES_DISABLED"].append( service )
+                        printStatus.info( f"Added new service '{ service }'", 1 )
+
+                except Exception:
+                    pass
+
+            try:
+                oldConf["BOT_VERSION"] = newConf["BOT_VERSION"]
+                printStatus.info( f"Updated to version '{ newConf['BOT_VERSION'] }'", 1 )
+
+            except Exception:
+                pass
+
+            with open( fileConf, "w" ) as external_Conf:
+                json.dump( oldConf, external_Conf, indent=4 )
+                external_Conf.close()
+
+            remove( fileConf + ".new" )
+
+        elif fileExists( fileConf + ".new" ) and not fileExists( fileConf ):
+            printStatus.info( f"Creating '{ fileConf }'...", 1 )
+            rename( fileConf + ".new" , fileConf )
+
+        printStatus.success_green( "Done", 1 )
+
+    printStatus.success_green( "Done", 0 )
+
     printStatus.work( "Bot is starting up...", 0 )
     importConfigs()
     bot.run( BOT_TOKEN )

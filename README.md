@@ -24,6 +24,7 @@ It can also run custom services on Host Server through `System Contol` (A.K.A. `
 <br><br>
 
 # Capabilities
+- `-ping` to mesure the Server Ping
 - Music Player control through `-join`, `-play`, `-pause`, `-resume`, `-skip`, `-loop`, `-stop` and `-leave`.
 - Play music directly from `YouTube` or `YouTube Music` the first time you request a song, activating the feature `caching` (see [Features](#features) section) the second time you request the same song it will be streamed directly from the disk.
 - Check you music pity with `-pity` (the higher it is, the higher is the probability to hear a song you didn't ask for).
@@ -76,7 +77,7 @@ Navigate to the installation folder (make sure it's empty) and write it down the
 ### Step 2
 Download the leatest release and extract it with:
 ```bash
-wget "https://github.com/Markus2003/simple-discord-bot/releases/download/v1.0.0/Bot.Deployer.zip" -O "Bot Deployer.zip" && unzip "Bot Deployer.zip" && rm "Bot Deployer.zip"
+wget "https://github.com/Markus2003/simpleDiscordBot/releases/latest/Bot Deployer.zip" -O "Bot Deployer.zip" && unzip "Bot Deployer.zip" && rm "Bot Deployer.zip"
 ```
 
 ### Step 3
@@ -196,7 +197,7 @@ I am **NOT** responsible for any damage or data steal caused to your machine by 
 <br><br>
 
 # License
-Thi project use the [GNU GPLv3](https://github.com/Markus2003/simple-discord-bot/blob/main/LICENSE) license.
+Thi project use the [GNU GPLv3](https://github.com/Markus2003/simpleDiscordBot/blob/main/LICENSE) license.
 <br><br>
 
 # Credit
